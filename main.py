@@ -1,7 +1,7 @@
 import requests
 
 # Define the GitHub API endpoint for issues
-issues_url = 'https://api.github.com/repos/<your-username>/<your-repo>/issues'
+issues_url = 'https://api.github.com/repos/jistiak/gpt4students/issues'
 
 # Set the headers for the API request, with your personal access token
 headers = {
@@ -19,9 +19,9 @@ def create_github_issue(title, body):
     # Send the API request to create the new issue
     response = requests.post(issues_url, headers=headers, json=payload)
     if response.status_code == 201:
-        print('Issue created successfully')
+        print('Feature request posted successfully!')
     else:
-        print('Error creating issue:', response.text)
+        print('Error:', response.text)
 
 # Call the create_github_issue function with the user's input
 create_github_issue('New feature request', 'Please add a feature that allows me to do XYZ')
