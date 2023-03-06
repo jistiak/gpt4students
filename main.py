@@ -26,7 +26,19 @@ def create_github_issue(title, body):
 # Call the create_github_issue function with the user's input
 create_github_issue('New feature request', 'Please add a feature that allows me to do XYZ')
 
-
+# create a function to generate resource recommendations
+def generate_resources(topic):
+    prompt = "Find three books, three research papers, and three blog or video links on " + topic
+    response = openai.Completion.create(
+        engine="text-davinci-002",
+        prompt=prompt,
+        temperature=0.5,
+        max_tokens=1024,
+        n = 9,
+        stop=None,
+        )
+    resources = response.choices[0].text.split("\n")
+    return resources
 
 # create a function to generate a PDF file
 def generate_pdf(topic, resources):
@@ -43,3 +55,19 @@ def generate_pdf(topic, resources):
     with open("resources.pdf", "rb") as pdf_file:
         b64 = base64.b64encode(pdf_file.read()).decode()
     return b64
+
+
+# create the Streamlit app interface
+st.title("Resource Recommendation Generator")
+topic_input = st.text_input("Enter a topic")
+if topic_input:
+    resources = generate_resources(topic_input)
+    st.markdown("# Recommended Resources")
+    for i, resource in enumerate(resources):
+        st.markdown(f"{i+1}. [{resource}]({resource})")
+
+    pdf_button = st.download_button(
+        label="Download PDF",
+        data=generate_pdf(topic_input, resources),
+        file_name="resources.pdf"
+    )
