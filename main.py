@@ -18,6 +18,8 @@ elif syllabus_input == "Upload file":
         st.write("Please upload a file or enter your syllabus in the text area.")
         st.stop()
 
+term_length = st.slider("Select your term length (in weeks)", 1, 20, 10)
+
 # Create form for exam preparation input
 exam_syllabus_input = st.radio("Choose exam syllabus input method:", ("Text input", "Upload file"))
 
@@ -30,6 +32,8 @@ elif exam_syllabus_input == "Upload file":
     else:
         st.write("Please upload a file or enter your exam syllabus in the text area.")
         st.stop()
+
+days_left = st.slider("Select the number of days left until your exam", 1, 100, 30)
 
 # Create form for generating study plan
 generate_plan = st.button("Generate study plan")
