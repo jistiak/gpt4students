@@ -1,4 +1,84 @@
 import requests
+import openai
+import streamlit as st
+from io import BytesIO
+import base64
+from fpdf import FPDF
+
+# Create form for syllabus input
+syllabus_input = st.radio("Choose syllabus input method:", ("Text input", "Upload file"))
+
+if syllabus_input == "Text input":
+    syllabus = st.text_area("Enter your syllabus here:")
+elif syllabus_input == "Upload file":
+    uploaded_file = st.file_uploader("Choose a file")
+    if uploaded_file is not None:
+        syllabus = uploaded_file.getvalue().decode("utf-8")
+    else:
+        st.write("Please upload a file or enter your syllabus in the text area.")
+        st.stop()
+
+# Create form for exam preparation input
+exam_syllabus_input = st.radio("Choose exam syllabus input method:", ("Text input", "Upload file"))
+
+if exam_syllabus_input == "Text input":
+    exam_syllabus = st.text_area("Enter your exam syllabus here:")
+elif exam_syllabus_input == "Upload file":
+    uploaded_file = st.file_uploader("Choose a file")
+    if uploaded_file is not None:
+        exam_syllabus = uploaded_file.getvalue().decode("utf-8")
+    else:
+        st.write("Please upload a file or enter your exam syllabus in the text area.")
+        st.stop()
+
+# Create form for generating study plan
+generate_plan = st.button("Generate study plan")
+
+if generate_plan:
+    if "syllabus" not in locals() or syllabus.strip() == "":
+        st.write("Please enter your syllabus.")
+    else:
+        # Generate study plan
+        prompt = f"Generate a study plan for a {term_length}-week term based on the following syllabus:\n\n{syllabus}"
+        response = openai.Completion.create(
+          engine="davinci",
+          prompt=prompt,
+          max_tokens=1024,
+          n=1,
+          stop=None,
+          temperature=0.5,
+        )
+
+        study_plan = response.choices[0].text
+
+        # Display study plan to user
+        st.write("Here's your study plan:")
+        st.write(study_plan)
+
+# Create form for generating exam preparation plan
+generate_exam_plan = st.button("Generate exam preparation plan")
+
+if generate_exam_plan:
+    if "exam_syllabus" not in locals() or exam_syllabus.strip() == "":
+        st.write("Please enter your exam syllabus.")
+    else:
+        # Generate exam preparation plan
+        prompt = f"Generate an exam preparation plan based on the following syllabus:\n\n{exam_syllabus}\n\nYou have {days_left} days until your exam."
+        response = openai.Completion.create(
+          engine="davinci",
+          prompt=prompt,
+          max_tokens=1024,
+          n=1,
+          stop=None,
+          temperature=0.5,
+        )
+
+        exam_plan = response.choices[0].text
+
+        # Display exam preparation plan to user
+        st.write("Here's your exam preparation plan:")
+        st.write(exam_plan)
+
 
 # Define the GitHub API endpoint for issues
 issues_url = 'https://api.github.com/repos/jistiak/gpt4students/issues'
